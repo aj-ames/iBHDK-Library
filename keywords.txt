@@ -1,0 +1,29 @@
+#######################################
+# Syntax Coloring Map For iBHDK
+#######################################
+# Class
+#######################################
+
+iBHDK	KEYWORD1
+
+#######################################
+# Methods and Functions
+#######################################
+
+brightness	KEYWORD2
+readAnalog	KEYWORD2
+rainbow		KEYWORD2
+RGBColor	KEYWORD2
+RGBlooper	KEYWORD2
+RGBWipelooper	KEYWORD2
+connectWiFi	KEYWORD2
+credentials	KEYWORD2
+
+
+#######################################
+# Constants
+#######################################
+
+hdk	LITERAL1
+timer	LITERAL1
+click	LITERAL1
