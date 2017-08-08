@@ -76,7 +76,7 @@ uint32_t black = pixels.Color(0,0,0);
 void iBHDK::brightness(uint8_t bright) {
     pixels.setBrightness(bright);
     brightValue = bright;
-}//End of brightness()
+}//End of brightness
 
 /*RGBColor function is used to set the RGB ring to one distinct color.
   Use delayValue if you want to set color to each RGB individially,
