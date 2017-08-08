@@ -38,7 +38,7 @@ void iBHDK::begin() {
   Serial.println();
   timer = millis();
   while(millis() - timer < 5000) {
-    RGBlooper(blue, 50, 1);
+    RGBFade();
     if(digitalRead(4) == HIGH)
       buttonState = true;
     if(buttonState == true && digitalRead(4) == LOW) {
@@ -55,6 +55,7 @@ void iBHDK::begin() {
 
 void iBHDK::brightness(uint8_t bright) {
     pixels.setBrightness(bright);
+    brightValue = bright;
 }
 
 void iBHDK::RGBColor(uint32_t color, int delayValue) {
@@ -91,6 +92,27 @@ void iBHDK::RGBWipelooper(uint32_t color, int delayValue, int cycles) {
       pixels.show();
     }
   }
+}
+
+void iBHDK::RGBRandom() {
+  int rand = random(0,11);
+  pixels.setPixelColor(rand, pixels.Color(random(0,256),random(0,256),random(0,256)));
+  pixels.show();
+  delay(50);
+  pixels.setPixelColor(rand, black);
+
+}
+
+void iBHDK::RGBFade() {
+  for(uint8_t j = 1; j < 150; j++) {
+    pixels.setBrightness(j);
+    for(int i = 0; i < 10; i++) {
+      pixels.setPixelColor(i, blue);
+      pixels.show();
+    }
+    delay(10);
+  }
+  pixels.setBrightness(brightValue);
 }
 
 void iBHDK::connectWiFi() {
@@ -184,13 +206,47 @@ int iBHDK::readAnalog(int pin, bool displayLED) {
   value = analogRead(pin);
   if(displayLED) {
     RGBColor(black,0);
-    int num = value / 100;
+    float num = value / 100;
     if(num <= 3)
-      color = green;
-    else if(num > 3 && num <= 7)
-      color = yellow;
+      color = pixels.Color(0, (int)(85*num), 0);
+    else if(num > 3 && num <= 6)
+      color = pixels.Color((int)(85*num), 255, 0);
     else
-      color = red;
+      color = pixels.Color(255, 255 - (int)(85*(num - 3)), 0);
+    for(int i = 0; i < num; i++) {
+      pixels.setPixelColor(i, color);
+      pixels.show();
+    }
+  }
+  delay(10);
+  return value;
+}
+
+int iBHDK::readAnalog(int pin, bool displayLED, int logic) {
+  int value = 0;
+  value = analogRead(pin);
+  if(displayLED) {
+    float num;
+    num = value / 100;
+    if(logic == 0) {
+      RGBColor(black,0);
+
+      if(num <= 3)
+        color = pixels.Color(0, (int)(85*num), 0);
+      else if(num > 3 && num <= 6)
+        color = pixels.Color((int)(85*num), 255, 0);
+      else
+        color = pixels.Color(255, 255 - (int)(85*(num - 6)), 0);
+    }
+    else if(logic == 1) {
+      RGBColor(black,0);
+      if(num <= 3)
+        color = pixels.Color((int)(85*num), 0, 0);
+      else if(num > 3 && num <= 6)
+        color = pixels.Color(255, (int)(85*num), 0);
+      else
+        color = pixels.Color(255 - (int)(85*(num - 3)), 255, 0);
+    }
     for(int i = 0; i < num; i++) {
       pixels.setPixelColor(i, color);
       pixels.show();

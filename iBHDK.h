@@ -21,13 +21,6 @@ Developed at iBHubs.
 
 class iBHDK {
   public:
-    String ssid = "";
-    String pass = "";
-    long timer = 0;
-    long timerUpperLimit = 0;
-    int click = 0;
-    bool buttonState = false;
-    uint32_t color;
     void begin();
     void brightness(uint8_t bright);
     void RGBColor(uint32_t color, int delayValue);
@@ -36,7 +29,20 @@ class iBHDK {
     void connectWiFi();
     String credentials();
     void rainbow();
+    void RGBRandom();
+    void RGBFade();
     int readAnalog(int pin, bool displayLED);
+    int readAnalog(int pin, bool displayLED, int logic);
+
+  private:
+    String ssid = "";
+    String pass = "";
+    long timer = 0;
+    int click = 0;
+    bool buttonState = false;
+    uint32_t color;
+    uint8_t brightValue = 255;
+
 };
 
 #endif
