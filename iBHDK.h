@@ -53,8 +53,8 @@ class iBHDK {
     void rainbow(int delayValue, int cycles);
     void RGBRandom();
     void RGBFade(uint32_t color);
-    int readAnalog(int pin, bool displayLED); //enum
-    int readAnalog(int pin, bool displayLED, int logic);
+    int readAnalog(int pin, RGBRING_t ring); //enum
+    int readAnalog(int pin, RGBRING_t ring, LOGIC_t logic);
 
   private:
     //For WiFi Credentials

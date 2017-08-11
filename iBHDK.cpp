@@ -288,10 +288,10 @@ void iBHDK::rainbow(int delayValue, int cycles) {
 /*readAnalog is used to read an Analog value and map it unto the RGB ring.
   If you don't want to use RGB ring, set displayLED to false.
 */
-int iBHDK::readAnalog(int pin, bool displayLED) {
+int iBHDK::readAnalog(int pin, RGBRING_t ring) {
   int value = 0;
   value = analogRead(pin);
-  if(displayLED) {
+  if(ring == RGB_TRUE) {
     RGBColor(black,0);
     //Gradient color change
     float num = value / 100;
@@ -314,14 +314,14 @@ int iBHDK::readAnalog(int pin, bool displayLED) {
   If Logic = 0, Low Color = Green, Mid Color = Yellow, High Color = Red
   If Logic = 1, Low Color = Red, Mid Color = Yellow, High Color = Green
 */
-int iBHDK::readAnalog(int pin, bool displayLED, int logic) {
+int iBHDK::readAnalog(int pin, RGBRING_t ring, LOGIC_t logic) {
   int value = 0;
   value = analogRead(pin);
-  if(displayLED) {
+  if(ring == RGB_TRUE) {
     //Gradient color change
     float num;
     num = value / 100;
-    if(logic == 0) {
+    if(logic == RED_GREEN) {
       RGBColor(black,0);
 
       if(num <= 3)
@@ -331,7 +331,7 @@ int iBHDK::readAnalog(int pin, bool displayLED, int logic) {
       else
         color = pixels.Color(255, 255 - (int)(85*(num - 6)), 0);
     }
-    else if(logic == 1) {
+    else if(logic == GREEN_RED) {
       RGBColor(black,0);
       if(num <= 3)
         color = pixels.Color((int)(85*num), 0, 0);
