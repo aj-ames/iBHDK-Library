@@ -22,14 +22,17 @@ Developed at iBHubs.
 #define RGB 12 //RGB Pin
 #define RGB_COUNT 10 //Number of RGB's
 
+//For WiFi connection type
 typedef enum WiFiCONN {
   SERIAL_IN,
   PRE_DEFINED
 } WiFiCONN_t;
+//To enable or disable RGB ring for readAnalog
 typedef enum RGBRING {
   RGB_TRUE,
   RGB_FALSE
 } RGBRING_t;
+//To specify logic type for readAnalog
 typedef enum LOGIC {
   GREEN_RED,
   RED_GREEN
@@ -37,8 +40,6 @@ typedef enum LOGIC {
 
 class iBHDK {
   public:
-    String ssid = "";
-    String pass = "";
     void begin();
     void begin(WiFiCONN_t connection);
     void begin(WiFiCONN_t connection, String ssid, String pass);
@@ -53,12 +54,13 @@ class iBHDK {
     void rainbow(int delayValue, int cycles);
     void RGBRandom();
     void RGBFade(uint32_t color);
-    int readAnalog(int pin, RGBRING_t ring); //enum
+    int readAnalog(int pin, RGBRING_t ring);
     int readAnalog(int pin, RGBRING_t ring, LOGIC_t logic);
 
   private:
     //For WiFi Credentials
-
+    String ssid = "";
+    String pass = "";
     //Used for time delays
     long timer = 0;
     //To count number of button clicks
