@@ -1,3 +1,4 @@
+
 /*
 Higher level wrapper class to simplify the learning curve for newbies.
 Developed to be used for iB IoT HDK v1.
@@ -21,31 +22,51 @@ Developed at iBHubs.
 #define RGB 12 //RGB Pin
 #define RGB_COUNT 10 //Number of RGB's
 
+typedef enum WiFiCONN {
+  SERIAL_IN,
+  PRE_DEFINED
+} WiFiCONN_t;
+typedef enum RGBRING {
+  RGB_TRUE,
+  RGB_FALSE
+} RGBRING_t;
+typedef enum LOGIC {
+  GREEN_RED,
+  RED_GREEN
+} LOGIC_t;
+
 class iBHDK {
   public:
+    String ssid = "";
+    String pass = "";
     void begin();
+    void begin(WiFiCONN_t connection);
+    void begin(WiFiCONN_t connection, String ssid, String pass);
     void brightness(uint8_t bright);
     void RGBColor(uint32_t color, int delayValue);
     void RGBlooper(uint32_t color, int delayValue, int cycles);
     void RGBWipelooper(uint32_t color, int delayValue, int cycles);
     void connectWiFi();
+    void WiFiConnectionRGB();
+    bool WiFiIP();
     String credentials();
     void rainbow();
     void RGBRandom();
     void RGBFade(uint32_t color);
-    int readAnalog(int pin, bool displayLED);
+    int readAnalog(int pin, bool displayLED); //enum
     int readAnalog(int pin, bool displayLED, int logic);
 
   private:
     //For WiFi Credentials
-    String ssid = "";
-    String pass = "";
+
     //Used for time delays
     long timer = 0;
     //To count number of button clicks
     int click = 0;
     //To store button press state
     bool buttonState = false;
+    //To check WiFi credential entry error
+    int error = 0;
     //To store color
     uint32_t color;
     //To store brightness value

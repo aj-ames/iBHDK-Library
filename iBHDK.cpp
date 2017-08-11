@@ -23,51 +23,56 @@ uint32_t purple = pixels.Color(148,0,211);
 uint32_t white = pixels.Color(255,255,255);
 uint32_t black = pixels.Color(0,0,0);
 
-/*Function used to initialize iB HDK
+/*Basic begin Function used to initialize iB HDK
   RGB ring is initialized here.
-  WiFi setup option is provided here.
 */
-
   void iBHDK::begin() {
-  //Configuring PinMode
-  pinMode(RGB,OUTPUT);
-  pinMode(BUTTON, INPUT_PULLUP);
-
-  //Starting RGB's
-  pixels.begin();
-  RGBColor(black, 0);
-  Serial.println("****************************************");
-  Serial.println("Initializing..");
-  Serial.println("****************************************");
-  //Welcome RGB Animation
-  rainbow();
-  RGBColor(black, 0);
-  delay(10);
-
-  //WiFi Setup
-  Serial.println("****************************************");
-  Serial.println("Long Press button once to setup WiFi");
-  Serial.println("Press button twice to skip WiFi setup");
-  Serial.println("****************************************");
-  Serial.println();
-  timer = millis();
-
-  //5 seconds delay to accept WiFi setup details from user
-  while(millis() - timer < 5000) {
-    RGBFade(blue); //Fade while input is made
-
-    //Algorithm to count number of button press
-    if(digitalRead(4) == HIGH)
-      buttonState = true;
-    if(buttonState == true && digitalRead(4) == LOW) {
-      click++;
-      buttonState = false;
-    }
-    if(click > 1)
-      break;
+    pinMode(RGB,OUTPUT);
+    pixels.begin();
+    RGBColor(black, 0);
+    Serial.println("****************************************");
+    Serial.println("Initializing..");
+    Serial.println("****************************************");
+    //Welcome RGB Animation
+    rainbow();
+    RGBColor(black, 0);
+    delay(10);
   }
-  if(click == 1)
-    connectWiFi(); //Begin Connection
+/*Function used to initialize iB HDK
+  begin() is called here. This function is used for
+  SERIAL_IN enum where the WiFi Credentials are entered
+  from Serial Monitor.
+*/
+  void iBHDK::begin(WiFiCONN_t connection) {
+  begin();
+  //WiFi Setup
+  Serial.println();
+  if(connection == SERIAL_IN)
+    connectWiFi();
+  else {
+    Serial.println("Invalid Entry");
+    RGBlooper(red,333,4);
+  }
+}//End of begin()
+
+/*Function used to initialize iB HDK
+begin() is called here. This function is used for PRE_DEFINED enumwhere the WiFi Credentials
+are hard coded.
+*/
+void iBHDK::begin(WiFiCONN_t connection, String ssid, String pass) {
+  begin();
+  if(connection == PRE_DEFINED) {
+    //Begin WiFi Connection
+    WiFi.begin(ssid.c_str(), pass.c_str());
+    //WiFi Connection RGB Animation
+    WiFiConnectionRGB();
+    //To display IP Address
+    WiFiIP();
+  }
+  else {
+    Serial.println("Invalid Entry");
+    RGBlooper(red,333,4);
+  }
 }//End of begin()
 
 /*Brightness function is used to set brightness of RGB's.
@@ -147,11 +152,59 @@ void iBHDK::RGBFade(uint32_t color) {
   pixels.setBrightness(brightValue);
 }//End of RGBFade
 
-/*connectWiFi function is used to connect to a WiFi network by
-  accepting values from the user
+
+/*Function is called while connection is established.
+*/
+void iBHDK::WiFiConnectionRGB() {
+  int p = 4, q = 9;
+  long timer = millis();
+  while (WiFi.status() != WL_CONNECTED && (millis() - timer < 15000)) {
+    pixels.setPixelColor(p, white);
+    pixels.setPixelColor(q, white);
+    pixels.show();
+    delay(50);
+    pixels.setPixelColor(p--, black);
+    pixels.setPixelColor(q--, black);
+    pixels.show();
+    if(p == -1 && q == 4) {
+      p = 4;
+      q = 9;
+    }
+  }
+}//End of WiFiConnectionRGB()
+
+/*Function to display IP address if connection established
+or red lights if Failed
+*/
+bool iBHDK::WiFiIP() {
+  if(WiFi.status() == WL_CONNECTED) {
+    //Connection Established. Display Green Lights.
+    Serial.println("WiFi Connection Established");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+    RGBlooper(green,333,4);
+    return true;
+  }
+  else {
+    //Connection not Established. Display Red Lights.
+    Serial.println("WiFi Connection Failed");
+    Serial.println("Reset to start again");
+    Serial.println();
+    if(error == 2)
+      RGBlooper(red,333,4);
+    else
+      RGBlooper(red,150,2);
+    return false;
+  }
+}
+
+/*connectWiFi is used to establish WiFi connection by
+accepting WiFi credentials from the Serial Monitor
 */
 void iBHDK::connectWiFi() {
   Serial.println("****************************************");
+  Serial.println("Use ~No line ending~ in Serial Monitor..");
+  Serial.println();
   Serial.println("Enter SSID and Password");
   Serial.println("SSID: ");
   ssid = credentials();
@@ -168,34 +221,18 @@ void iBHDK::connectWiFi() {
   WiFi.begin(ssid.c_str(), pass.c_str());
 
   //WiFi Connection RGB Animation
-  int p = 4, q = 5;
-  timer = millis();
-  while (WiFi.status() != WL_CONNECTED && (millis() - timer < 15000)) {
-    pixels.setPixelColor(p, white);
-    pixels.setPixelColor(q, white);
-    pixels.show();
-    delay(100);
-    pixels.setPixelColor(p--, black);
-    pixels.setPixelColor(q++, black);
-    pixels.show();
-    if(p == -1 && q == 10) {
-      p = 4;
-      q = 5;
-    }
-  }
-
-  if(WiFi.status() == WL_CONNECTED) {
-    //Connection Established. Display Green Lights.
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-    RGBlooper(green,333,4);
+  WiFiConnectionRGB();
+  //To display IP Address
+  if(WiFiIP() == false) {
+    error++;
+    if(error < 2)
+      Serial.println("Error in Credentials..");
+      Serial.println("Make sure to turn on ~No Line Ending~");
+      connectWiFi();
   }
   else {
-    //Connection not Established. Display Red Lights.
-    Serial.println("WiFi Failed");
-    Serial.println("Reset to start again");
-    RGBlooper(red,333,4);
+    Serial.println("Done!");
+    Serial.println();
   }
 }//End of connectWiFi()
 
