@@ -321,7 +321,7 @@ int iBHDK::readAnalog(int pin, RGBRING_t ring, LOGIC_t logic) {
     //Gradient color change
     float num;
     num = value / 100;
-    if(logic == RED_GREEN) {
+    if(logic == GREEN_RED) {
       RGBColor(black,0);
 
       if(num <= 3)
@@ -331,7 +331,7 @@ int iBHDK::readAnalog(int pin, RGBRING_t ring, LOGIC_t logic) {
       else
         color = pixels.Color(255, 255 - (int)(85*(num - 6)), 0);
     }
-    else if(logic == GREEN_RED) {
+    else if(logic == RED_GREEN) {
       RGBColor(black,0);
       if(num <= 3)
         color = pixels.Color((int)(85*num), 0, 0);
