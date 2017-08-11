@@ -50,7 +50,7 @@ class iBHDK {
     void WiFiConnectionRGB();
     bool WiFiIP();
     String credentials();
-    void rainbow();
+    void rainbow(int delayValue, int cycles);
     void RGBRandom();
     void RGBFade(uint32_t color);
     int readAnalog(int pin, bool displayLED); //enum

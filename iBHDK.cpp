@@ -34,7 +34,7 @@ uint32_t black = pixels.Color(0,0,0);
     Serial.println("Initializing..");
     Serial.println("****************************************");
     //Welcome RGB Animation
-    rainbow();
+    rainbow(5,5);
     RGBColor(black, 0);
     delay(10);
   }
@@ -275,13 +275,13 @@ uint32_t Wheel(byte WheelPos) {
 /*Function to display rainbow pattern.
   Source also found in Adafruit_NeoPixel
 */
-void iBHDK::rainbow() {
+void iBHDK::rainbow(int delayValue, int cycles) {
   uint16_t i, j;                                                                    // Declare variable for parsing the RGB LEDs.
-  for (j = 0; j < 256 * 5; j++) {
+  for (j = 0; j < 256 * cycles; j++) {
     for (i = 0; i < pixels.numPixels(); i++)                                         // Loop to setup colour for each pixel
       pixels.setPixelColor(i, Wheel(((i * 256 / pixels.numPixels()) + j) & 255));
     pixels.show();                                                                   // Display the set colours on the Pixels.
-    delay(0.5);
+    delay(delayValue);
     }
 }//End of rainbow()
 
